@@ -115,106 +115,116 @@ void load(char *namep,char *namec,char *namet)
         g_print("ERROR in opening files\n");
         return;
     }
-    while(!feof(fp[0])&&!ferror(fp[0]))/*when to stop reading*/
-    {//load province linked list
-        p1=(Province *)malloc(sizeof(Province));
-        fread(p1,sizeof(Province),1,fp[0]);
-        if(feof(fp[0])||ferror(fp[0]))
-        {/*check whether the eof is read*/
-            //g_print("eof or error\n");
-            break;
-        }
-        g_print("province :%s\n",p1->num);
-        if(current_province)
-        {
-            current_province->next=p1;
-        }
-        else
-        {
-            current_province=head_province=p1;
-        }
-        p1->next=NULL;
-        p1->head_city=NULL;
-        current_province=p1;
-    }
-    p1=head_province;
-    while(!feof(fp[1])&&!ferror(fp[1]))
-    {//load city linked list
-        p2=(City *)malloc(sizeof(City));
-        fread(p2,sizeof(City),1,fp[1]);
-        if(feof(fp[1])||ferror(fp[1]))
-        {/*check what has been read*/
-            //g_print("eof or error\n");
-            break;
-        }
-        g_print("province:%s\tcity:%s\n",p2->province_num,p2->num);
-        if(current_city)
-        {
-            current_city->next=p2;
-        }
-        else
-        {
-            head_city=current_city=p2;
-        }
-        if(p2->next==NULL)
-        {/*the last node appears,then link city with province*/
-            for(p1=head_province;p1&&strcmp(p1->num,p2->province_num);p1=p1->next);
-            if(p1)
-            {
-                g_print("[161]Found province,num is %s\n",p1->num);
-                p1->head_city=head_city;
-            }
-            current_city=head_city=NULL;/*new linked list*/
-        }
-        else
-        {
-            p2->next=NULL;
-            current_city=p2;/*reassign the current_city pointer*/
-        }
-        p2->head_tree=NULL;/*initiallize the pointer to tree list*/
-    }//end of city
+	if(fp[0])
+	{
+		while(!feof(fp[0])&&!ferror(fp[0]))/*when to stop reading*/
+		{//load province linked list
+			p1=(Province *)malloc(sizeof(Province));
+			fread(p1,sizeof(Province),1,fp[0]);
+			if(feof(fp[0])||ferror(fp[0]))
+			{/*check whether the eof is read*/
+				//g_print("eof or error\n");
+				break;
+			}
+			g_print("province :%s\n",p1->num);
+			if(current_province)
+			{
+				current_province->next=p1;
+			}
+			else
+			{
+				current_province=head_province=p1;
+			}
+			p1->next=NULL;
+			p1->head_city=NULL;
+			current_province=p1;
+		}
+	}
 
-    while(!feof(fp[2])&&!ferror(fp[2]))
-    {//load tree linked list
-        p3=(Tree *)malloc(sizeof(Tree));
-        fread(p3,sizeof(Tree),1,fp[2]);
-        if(feof(fp[2])||ferror(fp[2]))
-        {
-            //g_print("eof or error\n");
-            break;
-        }
-        g_print("province:%s\tcity:%s\ttree:%s\n",p3->province_num,p3->city_num,p3->num);
-        if(current_tree)
-        {
-            current_tree->next=p3;
-        }
-        else
-            head_tree=current_tree=p3;
-        if(p3->next==NULL)
-        {//the last node of the linked list
-            for(p1=head_province;p1&&strcmp(p1->num,p3->province_num);p1=p1->next);
-            if(p1)//located the province
-            {
-                g_print("Found province,num is %s\n",p1->num);
-                for(p2=p1->head_city;p2&&strcmp(p2->num,p3->city_num);p2=p2->next);
-                if(p2)//located the city
-                {
-                    g_print("found city,num is %s\n",p2->num);
-                    p2->head_tree=head_tree;
-                }
-                else
-                {
-                    g_print("city not found,address is %p\n",p2);
-                }
-            }
-            head_tree=current_tree=NULL;
-        }
-        else
-        {
-            p3->next=NULL;
-            current_tree=p3;
-        }
-    }
+    p1=head_province;
+	if(fp[1])
+	{
+		while(!feof(fp[1])&&!ferror(fp[1]))
+		{//load city linked list
+			p2=(City *)malloc(sizeof(City));
+			fread(p2,sizeof(City),1,fp[1]);
+			if(feof(fp[1])||ferror(fp[1]))
+			{/*check what has been read*/
+				//g_print("eof or error\n");
+				break;
+			}
+			g_print("province:%s\tcity:%s\n",p2->province_num,p2->num);
+			if(current_city)
+			{
+				current_city->next=p2;
+			}
+			else
+			{
+				head_city=current_city=p2;
+			}
+			if(p2->next==NULL)
+			{/*the last node appears,then link city with province*/
+				for(p1=head_province;p1&&strcmp(p1->num,p2->province_num);p1=p1->next);
+				if(p1)
+				{
+					g_print("[161]Found province,num is %s\n",p1->num);
+					p1->head_city=head_city;
+				}
+				current_city=head_city=NULL;/*new linked list*/
+			}
+			else
+			{
+				p2->next=NULL;
+				current_city=p2;/*reassign the current_city pointer*/
+			}
+			p2->head_tree=NULL;/*initiallize the pointer to tree list*/
+		}//end of city
+	}
+
+	if(fp[2])
+	{
+		while(!feof(fp[2])&&!ferror(fp[2]))
+		{//load tree linked list
+			p3=(Tree *)malloc(sizeof(Tree));
+			fread(p3,sizeof(Tree),1,fp[2]);
+			if(feof(fp[2])||ferror(fp[2]))
+			{
+				//g_print("eof or error\n");
+				break;
+			}
+			g_print("province:%s\tcity:%s\ttree:%s\n",p3->province_num,p3->city_num,p3->num);
+			if(current_tree)
+			{
+				current_tree->next=p3;
+			}
+			else
+				head_tree=current_tree=p3;
+			if(p3->next==NULL)
+			{//the last node of the linked list
+				for(p1=head_province;p1&&strcmp(p1->num,p3->province_num);p1=p1->next);
+				if(p1)//located the province
+				{
+					g_print("Found province,num is %s\n",p1->num);
+					for(p2=p1->head_city;p2&&strcmp(p2->num,p3->city_num);p2=p2->next);
+					if(p2)//located the city
+					{
+						g_print("found city,num is %s\n",p2->num);
+						p2->head_tree=head_tree;
+					}
+					else
+					{
+						g_print("city not found,address is %p\n",p2);
+					}
+				}
+				head_tree=current_tree=NULL;
+			}
+			else
+			{
+				p3->next=NULL;
+				current_tree=p3;
+			}
+		}
+	}
     fclose(fp[0]);
     fclose(fp[1]);
     fclose(fp[2]);
